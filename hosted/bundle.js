@@ -67,55 +67,6 @@ var handlePasswordChange = function handlePasswordChange(e) {
   });
 };
 
-/*
-const LinkForm = (props) => {
-  if(!props.name) props.name = '';
-  if(!props.title) props.title = '';
-  if(!props.content) props.content = '';
-  return (
-    <div className="modal fade" id={"editModal-" + props.name} tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-      <form id="linkForm"
-        onSubmit={handleLink}
-        name="linkForm"
-        action="/admin"
-        method="POST"
-        className="linkForm"
-      >
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="editModalLabel">Edit Link</h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <div className="form-group">
-                <label htmlFor="name">URL slug</label>
-                <input className="form-control" id="linkName" type="text" name="name" placeholder="home" value={props.name} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="title">Title</label>
-                <input className="form-control" id="linkTitle" type="text" name="title" placeholder="Link Title" value={props.title} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="content">Content</label>
-                <textarea className="form-control" id="linkContent" type="text" name="content" placeholder="Link Content (Markdown is supported)">{props.content}</textarea>
-              </div>
-              <input type="hidden" name="_csrf" value={props.csrf} />
-            </div>
-            <div className="modal-footer">
-              <button type="button" className="d-none btn btn-danger" data-dismiss="modal">Delete</button>
-              <input type="submit" className="btn btn-primary" value="Save" />
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-  );
-};
-*/
-
 var ShortenWindow = function ShortenWindow(props) {
   return React.createElement(
     "form",
@@ -179,7 +130,7 @@ var LinkStats = function LinkStats(props) {
       React.createElement(
         "td",
         null,
-        entry.country
+        entry.country.toUpperCase()
       ),
       React.createElement(
         "td",
@@ -280,7 +231,7 @@ var LinkStats = function LinkStats(props) {
       React.createElement(
         "i",
         null,
-        "*: Country requires using Cloudflare w/ IP Geolocation turned on"
+        "*: Country requires using Cloudflare w/ IP Geolocation turned on. \"XX\" means unknown."
       )
     )
   );

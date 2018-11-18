@@ -84,7 +84,7 @@ const LinkStats = (props) => {
     return (
       <tr>
         <td>{entry.referrer}</td>
-        <td>{entry.country}</td>
+        <td>{entry.country.toUpperCase()}</td>
         <td>{entry.timestamp}</td>
       </tr>
     );
@@ -127,7 +127,7 @@ const LinkStats = (props) => {
           {statNodes}
         </tbody>
       </table>
-      <p><i>*: Country requires using Cloudflare w/ IP Geolocation turned on</i></p>
+      <p><i>*: Country requires using Cloudflare w/ IP Geolocation turned on. "XX" means unknown.</i></p>
     </div>
   );
 };
