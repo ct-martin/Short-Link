@@ -3,14 +3,12 @@
 var handleLogin = function handleLogin(e) {
   e.preventDefault();
 
-  $("#domoMessage").animate({ width: 'hide' }, 350);
+  hideError();
 
   if ($("#user").val() == '' || $("#pass").val() == '') {
-    handleError("RAWR: Username or password is empty");
+    handleError("Error: Username or password is empty");
     return false;
   }
-
-  console.log($("input[name=_csrf]").val());
 
   sendAjax('POST', $("#loginForm").attr("action"), $("#loginForm").serialize(), redirect);
 
@@ -20,15 +18,15 @@ var handleLogin = function handleLogin(e) {
 var handleSignup = function handleSignup(e) {
   e.preventDefault();
 
-  $("#domoMessage").animate({ width: 'hide' }, 350);
+  hideError();
 
   if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-    handleError("RAWR! All fields are required");
+    handleError("Error: All fields are required");
     return false;
   }
 
   if ($("#pass").val() !== $("#pass2").val()) {
-    handleError("RAWR! Passwords do not match");
+    handleError("Error: Passwords do not match");
     return false;
   }
 
@@ -42,24 +40,32 @@ var LoginWindow = function LoginWindow(props) {
     "form",
     { id: "loginForm", name: "loginForm",
       onSubmit: handleLogin,
-      action: "/login",
+      action: "/admin/login",
       method: "POST",
-      className: "mainForm"
+      className: "ui form"
     },
     React.createElement(
-      "label",
-      { htmlFor: "username" },
-      "Username: "
+      "div",
+      { className: "field" },
+      React.createElement(
+        "label",
+        { htmlFor: "username" },
+        "Username: "
+      ),
+      React.createElement("input", { id: "user", type: "text", name: "username", placeholder: "username" })
     ),
-    React.createElement("input", { id: "user", type: "text", name: "username", placeholder: "username" }),
     React.createElement(
-      "label",
-      { htmlFor: "pass" },
-      "Password: "
+      "div",
+      { className: "field" },
+      React.createElement(
+        "label",
+        { htmlFor: "pass" },
+        "Password: "
+      ),
+      React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "placeholder" })
     ),
-    React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "placeholder" }),
-    React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-    React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign in" })
+    React.createElement("input", { type: "hidden", name: "_csrf", value: csrf }),
+    React.createElement("input", { className: "ui button", type: "submit", value: "Sign in" })
   );
 };
 
@@ -69,62 +75,100 @@ var SignupWindow = function SignupWindow(props) {
     { id: "signupForm",
       name: "signupForm",
       onSubmit: handleSignup,
-      action: "/signup",
+      action: "/admin/signup",
       method: "POST",
-      className: "mainForm"
+      className: "ui form"
     },
     React.createElement(
-      "label",
-      { htmlFor: "username" },
-      "Username: "
+      "div",
+      { className: "field" },
+      React.createElement(
+        "label",
+        { htmlFor: "username" },
+        "Username: "
+      ),
+      React.createElement("input", { id: "user", type: "text", name: "username", placeholder: "username" })
     ),
-    React.createElement("input", { id: "user", type: "text", name: "username", placeholder: "username" }),
     React.createElement(
-      "label",
-      { htmlFor: "pass" },
-      "Password: "
+      "div",
+      { className: "field" },
+      React.createElement(
+        "label",
+        { htmlFor: "pass" },
+        "Password: "
+      ),
+      React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "password" })
     ),
-    React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "password" }),
     React.createElement(
-      "label",
-      { htmlFor: "pass2" },
-      "Password: "
+      "div",
+      { className: "field" },
+      React.createElement(
+        "label",
+        { htmlFor: "pass2" },
+        "Password: "
+      ),
+      React.createElement("input", { id: "pass2", type: "password", name: "pass2", placeholder: "retype password" })
     ),
-    React.createElement("input", { id: "pass2", type: "password", name: "pass2", placeholder: "retype password" }),
-    React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-    React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign Up" })
+    React.createElement("input", { type: "hidden", name: "_csrf", value: csrf }),
+    React.createElement("input", { className: "ui button", type: "submit", value: "Sign Up" })
   );
 };
 
-var createLoginWindow = function createLoginWindow(csrf) {
-  ReactDOM.render(React.createElement(LoginWindow, { csrf: csrf }), document.querySelector("#content"));
+var createLoginWindow = function createLoginWindow() {
+  $("nav a").removeClass("active");
+  $("#loginButton").addClass("active");
+  ReactDOM.render(React.createElement(LoginWindow, null), document.querySelector("main"));
 };
 
-var createSignupWindow = function createSignupWindow(csrf) {
-  ReactDOM.render(React.createElement(SignupWindow, { csrf: csrf }), document.querySelector("#content"));
+var createSignupWindow = function createSignupWindow() {
+  $("nav a").removeClass("active");
+  $("#signupButton").addClass("active");
+  ReactDOM.render(React.createElement(SignupWindow, null), document.querySelector("main"));
 };
 
-var setup = function setup(csrf) {
-  var loginButton = document.querySelector("#loginButton");
-  var signupButton = document.querySelector("#signupButton");
+var createUI = function createUI() {
+  ReactDOM.render(React.createElement(
+    "div",
+    null,
+    React.createElement(
+      "nav",
+      { className: "ui top fixed menu" },
+      React.createElement(
+        "div",
+        { className: "header item" },
+        "URL Shortener"
+      ),
+      React.createElement(
+        "a",
+        { id: "loginButton", className: "active item", onClick: createLoginWindow },
+        "Login"
+      ),
+      React.createElement(
+        "a",
+        { id: "signupButton", className: "item", onClick: createSignupWindow },
+        "Sign up"
+      )
+    ),
+    React.createElement(
+      "div",
+      { className: "ui container" },
+      React.createElement("div", { id: "error" }),
+      React.createElement(
+        "main",
+        null,
+        React.createElement(LoginWindow, null)
+      )
+    )
+  ), document.querySelector("#content"));
+};
 
-  signupButton.addEventListener("click", function (e) {
-    e.preventDefault();
-    createSignupWindow(csrf);
-    return false;
-  });
-
-  loginButton.addEventListener("click", function (e) {
-    e.preventDefault();
-    createLoginWindow(csrf);
-    return false;
-  });
-
-  createLoginWindow(csrf); // default view
+var setup = function setup(csrfToken) {
+  csrf = csrfToken;
+  createUI(csrf); // default view
 };
 
 var getToken = function getToken() {
-  sendAjax('GET', '/getToken', null, function (result) {
+  sendAjax('GET', '/admin/getToken', null, function (result) {
     setup(result.csrfToken);
   });
 };
@@ -132,16 +176,41 @@ var getToken = function getToken() {
 $(document).ready(function () {
   getToken();
 });
+var csrf = void 0;
 "use strict";
 
 var handleError = function handleError(message) {
-  //$("#errorMessage").text(message);
-  //$("#domoMessage").animate({width:'toggle'},350);
+  ReactDOM.render(React.createElement(
+    "div",
+    { className: "ui negative message" },
+    React.createElement("i", { className: "close icon", onClick: hideError }),
+    React.createElement(
+      "div",
+      { className: "header" },
+      "Oops!"
+    ),
+    React.createElement(
+      "p",
+      null,
+      message
+    )
+  ), document.querySelector("#error"));
   console.log("Error: " + message);
 };
 
+var handleForm = function handleForm(e, callback) {
+  e.preventDefault();
+  hideError();
+  sendAjax('POST', $(e.target).attr("action"), $(e.target).serialize(), callback);
+  return false;
+};
+
+var hideError = function hideError() {
+  $("#error").empty();
+};
+
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({ width: 'hide' }, 350);
+  $("#error div").hide();
   window.location = response.redirect;
 };
 

@@ -1,14 +1,12 @@
 const handleLogin = (e) => {
   e.preventDefault();
 
-  $("#domoMessage").animate({width:'hide'},350);
+  hideError();
 
   if($("#user").val() == '' || $("#pass").val() == '') {
-    handleError("RAWR: Username or password is empty");
+    handleError("Error: Username or password is empty");
     return false;
   }
-
-  console.log($("input[name=_csrf]").val());
 
   sendAjax('POST', $("#loginForm").attr("action"), $("#loginForm").serialize(), redirect);
 
@@ -18,15 +16,15 @@ const handleLogin = (e) => {
 const handleSignup = (e) => {
   e.preventDefault();
 
-  $("#domoMessage").animate({width:'hide'},350);
+  hideError();
 
   if($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-    handleError("RAWR! All fields are required");
+    handleError("Error: All fields are required");
     return false;
   }
 
   if($("#pass").val() !== $("#pass2").val()) {
-    handleError("RAWR! Passwords do not match");
+    handleError("Error: Passwords do not match");
     return false;
   }
 
@@ -39,16 +37,20 @@ const LoginWindow = (props) => {
   return (
     <form id="loginForm" name="loginForm"
       onSubmit={handleLogin}
-      action="/login"
+      action="/admin/login"
       method="POST"
-      className="mainForm"
+      className="ui form"
     >
-      <label htmlFor="username">Username: </label>
-      <input id="user" type="text" name="username" placeholder="username" />
-      <label htmlFor="pass">Password: </label>
-      <input id="pass" type="password" name="pass" placeholder="placeholder" />
-      <input type="hidden" name="_csrf" value={props.csrf} />
-      <input className="formSubmit" type="submit" value="Sign in" />
+      <div className="field">
+        <label htmlFor="username">Username: </label>
+        <input id="user" type="text" name="username" placeholder="username" />
+      </div>
+      <div className="field">
+        <label htmlFor="pass">Password: </label>
+        <input id="pass" type="password" name="pass" placeholder="placeholder" />
+      </div>
+      <input type="hidden" name="_csrf" value={csrf} />
+      <input className="ui button" type="submit" value="Sign in" />
     </form>
   );
 };
@@ -58,57 +60,76 @@ const SignupWindow = (props) => {
     <form id="signupForm"
       name="signupForm"
       onSubmit={handleSignup}
-      action="/signup"
+      action="/admin/signup"
       method="POST"
-      className="mainForm"
+      className="ui form"
     >
-      <label htmlFor="username">Username: </label>
-      <input id="user" type="text" name="username" placeholder="username" />
-      <label htmlFor="pass">Password: </label>
-      <input id="pass" type="password" name="pass" placeholder="password" />
-      <label htmlFor="pass2">Password: </label>
-      <input id="pass2" type="password" name="pass2" placeholder="retype password" />
-      <input type="hidden" name="_csrf" value={props.csrf} />
-      <input className="formSubmit" type="submit" value="Sign Up" />
+      <div className="field">
+        <label htmlFor="username">Username: </label>
+        <input id="user" type="text" name="username" placeholder="username" />
+      </div>
+      <div className="field">
+        <label htmlFor="pass">Password: </label>
+        <input id="pass" type="password" name="pass" placeholder="password" />
+      </div>
+      <div className="field">
+        <label htmlFor="pass2">Password: </label>
+        <input id="pass2" type="password" name="pass2" placeholder="retype password" />
+      </div>
+      <input type="hidden" name="_csrf" value={csrf} />
+      <input className="ui button" type="submit" value="Sign Up" />
     </form>
   );
 };
 
-const createLoginWindow = (csrf) => {
+const createLoginWindow = () => {
+  $("nav a").removeClass("active");
+  $("#loginButton").addClass("active");
   ReactDOM.render(
-    <LoginWindow csrf={csrf} />,
+    <LoginWindow />,
+    document.querySelector("main")
+  );
+};
+
+const createSignupWindow = () => {
+  $("nav a").removeClass("active");
+  $("#signupButton").addClass("active");
+  ReactDOM.render(
+    <SignupWindow />,
+    document.querySelector("main")
+  );
+};
+
+const createUI = () => {
+  ReactDOM.render(
+    <div>
+      <nav className="ui top fixed menu">
+        <div className="header item">URL Shortener</div>
+        <a id="loginButton" className="active item" onClick={createLoginWindow}>
+          Login
+        </a>
+        <a id="signupButton" className="item" onClick={createSignupWindow}>
+          Sign up
+        </a>
+      </nav>
+      <div className="ui container">
+        <div id="error"></div>
+        <main>
+          <LoginWindow />
+        </main>
+      </div>
+    </div>,
     document.querySelector("#content")
   );
 };
 
-const createSignupWindow = (csrf) => {
-  ReactDOM.render(
-    <SignupWindow csrf={csrf} />,
-    document.querySelector("#content")
-  );
-};
-
-const setup = (csrf) => {
-  const loginButton = document.querySelector("#loginButton");
-  const signupButton = document.querySelector("#signupButton");
-
-  signupButton.addEventListener("click", (e) => {
-    e.preventDefault();
-    createSignupWindow(csrf);
-    return false;
-  });
-
-  loginButton.addEventListener("click", (e) => {
-    e.preventDefault();
-    createLoginWindow(csrf);
-    return false;
-  });
-
-  createLoginWindow(csrf); // default view
+const setup = (csrfToken) => {
+  csrf = csrfToken;
+  createUI(csrf); // default view
 };
 
 const getToken = () => {
-  sendAjax('GET', '/getToken', null, (result) => {
+  sendAjax('GET', '/admin/getToken', null, (result) => {
     setup(result.csrfToken);
   });
 };
@@ -116,3 +137,4 @@ const getToken = () => {
 $(document).ready(function() {
   getToken();
 });
+let csrf;

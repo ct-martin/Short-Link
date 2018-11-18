@@ -14,7 +14,7 @@ const csrf = require('csurf');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/430-project2-ctmartin';
+const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/430-project2-v2-ctmartin';
 
 mongoose.connect(dbURL, (err) => {
   if (err) {

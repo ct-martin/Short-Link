@@ -30,7 +30,7 @@ const login = (request, response) => {
 
     req.session.account = Account.AccountModel.toAPI(account);
 
-    return res.json({ redirect: `/${req.body.username}` });
+    return res.json({ redirect: '/admin' });
   });
 };
 
@@ -69,7 +69,7 @@ const signup = (request, response) => {
 
     savePromise.then(() => {
       req.session.account = Account.AccountModel.toAPI(newAccount);
-      res.json({ redirect: `/${req.body.username}` });
+      res.json({ redirect: '/admin' });
     });
 
     savePromise.catch((err) => {
@@ -82,6 +82,40 @@ const signup = (request, response) => {
       return res.status(400).json({ error: 'An error occurred. Does this account already exist?' });
     });
   });
+};
+
+const changePassword = (request, response) => {
+  const req = request;
+  const res = response;
+
+  // force cast to strings b/c security
+  req.body.oldpassword = `${req.body.oldpassword}`;
+  req.body.pass = `${req.body.pass}`;
+  req.body.pass2 = `${req.body.pass2}`;
+
+  if (!req.body.oldpassword || !req.body.pass || !req.body.pass2) {
+    return res.status(400).json({ error: 'Error: All fields are required' });
+  }
+
+  if (req.body.pass !== req.body.pass2) {
+    return res.status(400).json({ error: 'Error: Passwords do not match' });
+  }
+
+  const reserved = ['admin', 'login', 'logout', 'getPages', 'getToken', 'logout', 'api'];
+  if (reserved.includes(req.body.username)) {
+    return res.status(400).json({ error: 'Error: Username is a reserved string' });
+  }
+
+  return Account.AccountModel.changePassword(
+    req.session.account.username,
+    req.body.oldpassword, req.body.pass,
+    (err) => {
+      if (err) {
+        res.status(400).json({ error: 'An error occurred' });
+      }
+      res.json({ success: 'success' });
+    }
+  );
 };
 
 const getToken = (request, response) => {
@@ -101,4 +135,5 @@ module.exports = {
   logout,
   signup,
   getToken,
+  changePassword,
 };
