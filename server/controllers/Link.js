@@ -7,7 +7,12 @@ const makerPage = (req, res) =>
   // Links are loaded post-page-load
    res.render('app', { csrfToken: req.csrfToken() });
 
-const makeLink = (req, res) => {
+const makeLink = (request, res) => {
+  const req = request;
+
+  req.body.slug = `${req.body.slug}`;
+  req.body.redirect = `${req.body.redirect}`;
+
   if (!req.body.slug || !req.body.redirect) {
     return res.status(400).json({ error: 'Error: All fields are required' });
   }
