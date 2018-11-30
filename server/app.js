@@ -11,6 +11,7 @@ const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const url = require('url');
 const csrf = require('csurf');
+const helmet = require('helmet');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
