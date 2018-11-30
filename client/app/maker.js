@@ -6,6 +6,11 @@ const handleShorten = (e) => {
     return false;
   }
 
+  if(!$("#slug").val().toLowerCase.match(/[a-z0-9-]+/)) {
+    handleError("Error: Only the hyphen (-) and alphanumeric characters are allowed in the slug.");
+    return false;
+  }
+
   handleForm(e, () => {
     ReactDOM.render(
       <div className="ui positive message">
