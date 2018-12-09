@@ -15,7 +15,7 @@ const helmet = require('helmet');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/430-project2-v2-ctmartin';
+const dbURL = process.env.MONGODB_URI || process.env.MONGODB_URL || 'mongodb://localhost/430-project2-v2-ctmartin';
 
 mongoose.connect(dbURL, (err) => {
   if (err) {
@@ -31,8 +31,8 @@ let redisURL = {
 
 let redisPASS;
 
-if (process.env.REDISCLOUD_URL) {
-  redisURL = url.parse(process.env.REDISCLOUD_URL);
+if (process.env.REDISCLOUD_URL || process.env.REDIS_URL) {
+  redisURL = url.parse(process.env.REDISCLOUD_URL || process.env.REDIS_URL);
   redisPASS = redisURL.auth.split(':')[1];
 }
 
