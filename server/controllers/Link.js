@@ -153,7 +153,7 @@ const linkRedirect = (request, response) => {
     }
     if (doc.start > Date.now()) {
       return res.status(400).json({ error: 'An error occurred. Do you have the right link?' });
-    } else if (doc.end < Date.now()) {
+    } else if (doc.timedEnd ? doc.end < Date.now() : false) {
       return res.status(400).json({ error: 'Error: This link has expired' });
     }
 

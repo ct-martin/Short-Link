@@ -123,6 +123,19 @@ var LinkStats = function LinkStats(props) {
       countries = [],
       browsers = [],
       platforms = [];
+  var timedData = props.link.timedEnd ? React.createElement(
+    "p",
+    null,
+    "Open ",
+    new Date(props.link.start).toLocaleString(),
+    " - ",
+    new Date(props.link.end).toLocaleString()
+  ) : React.createElement(
+    "p",
+    null,
+    "Opened ",
+    new Date(props.link.start).toLocaleString()
+  );
   var statNodes = props.stats.map(function (entry) {
     total++;
     if (entry.ua === '') {
@@ -210,7 +223,8 @@ var LinkStats = function LinkStats(props) {
             "a",
             { href: props.link.redirect, target: "_blank" },
             props.link.redirect
-          )
+          ),
+          timedData
         )
       )
     ),

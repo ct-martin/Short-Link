@@ -81,6 +81,11 @@ const ShortenWindow = (props) => {
 
 const LinkStats = (props) => {
   let total = 0, unknown = 0, mobile = 0, countries = [], browsers = [], platforms = [];
+  const timedData = props.link.timedEnd ? (
+    <p>Open {new Date(props.link.start).toLocaleString()} - {new Date(props.link.end).toLocaleString()}</p>
+  ) : (
+    <p>Opened {new Date(props.link.start).toLocaleString()}</p>
+  );
   const statNodes = props.stats.map((entry) => {
     total++;
     if(entry.ua === '') {
@@ -126,6 +131,7 @@ const LinkStats = (props) => {
             <a href={props.link.redirect} target="_blank">
               {props.link.redirect}
             </a>
+            {timedData}
           </div>
         </div>
       </div>

@@ -28,6 +28,11 @@ const LinkSchema = new mongoose.Schema({
     set: setName,
   },
 
+  timedEnd: {
+    type: Boolean,
+    default: true,
+  },
+
   start: {
     type: Date,
     default: Date.now,
@@ -53,8 +58,9 @@ const LinkSchema = new mongoose.Schema({
 LinkSchema.statics.toAPI = (doc) => ({
   slug: doc.slug,
   redirect: doc.redirect,
-  start: doc.start,
-  end: doc.end,
+  timedEnd: doc.timedEnd,
+  start: doc.start || false,
+  end: doc.end || false,
 });
 
 LinkSchema.statics.findByOwner = (ownerId, callback) => {
@@ -62,7 +68,7 @@ LinkSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return LinkModel.find(search).select('slug redirect start end').exec(callback);
+  return LinkModel.find(search).select('slug redirect timedEnd start end').exec(callback);
 };
 
 LinkSchema.statics.delete = (ownerId, linkId, callback) => {
@@ -83,7 +89,7 @@ LinkSchema.statics.findBySlug = (slug, ownerId, callback) => {
     search.owner = convertId(ownerId);
   }
 
-  return LinkModel.find(search).select('slug redirect start end').exec(callback);
+  return LinkModel.find(search).select('slug redirect timedEnd start end').exec(callback);
 };
 
 LinkModel = mongoose.model('Link', LinkSchema);
