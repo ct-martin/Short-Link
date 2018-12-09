@@ -15,7 +15,7 @@ const helmet = require('helmet');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const dbURL = process.env.MONGODB_URI || process.env.MONGODB_URL || 'mongodb://localhost/430-project2-v2-ctmartin';
+const dbURL = process.env.MONGODB_URI || process.env.MONGODB_URL || 'mongodb://localhost/Short-Link';
 
 mongoose.connect(dbURL, (err) => {
   if (err) {

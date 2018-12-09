@@ -111,9 +111,9 @@ const changePassword = (request, response) => {
     req.body.oldpassword, req.body.pass,
     (err) => {
       if (err) {
-        res.status(400).json({ error: 'An error occurred' });
+        return res.status(400).json({ error: 'An error occurred' });
       }
-      res.json({ success: 'success' });
+      return res.json({ success: 'success' });
     }
   );
 };

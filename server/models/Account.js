@@ -83,8 +83,9 @@ AccountModel.findByUsername(username, (err, doc) => {
 });
 
 AccountSchema.statics.changePassword = (username, oldpassword, password, callback) =>
-  AccountModel.authenticate(username, oldpassword, (err) => {
+  AccountModel.authenticate(username, oldpassword, (err, account) => {
     if (err) return callback(err);
+    if (!account) return callback('Username or password incorrect');
     return AccountModel.generateHash(password, (salt, hash) => AccountModel.updateOne(
       { username },
       {
