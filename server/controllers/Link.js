@@ -16,6 +16,12 @@ const makeLink = (request, res) => {
   if (!req.body.slug || !req.body.redirect) {
     return res.status(400).json({ error: 'Error: All fields are required' });
   }
+  try {
+    const url = new URL(req.body.redirect);
+    if (!url) res.status(400).json({ error: 'Redirect is not a valid URL' });
+  } catch (err) {
+    return res.status(400).json({ error: 'Redirect is not a valid URL' });
+  }
   if (!req.body.slug.match(/[a-z0-9-]+/)) {
     return res.status(400).json({ error:
       'Error: Only the hyphen (-) and alphanumeric characters are allowed in the slug.',
