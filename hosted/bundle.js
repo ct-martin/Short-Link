@@ -195,13 +195,22 @@ var LinkStats = function LinkStats(props) {
         React.createElement(
           "div",
           { className: "header" },
-          "Stats for /",
-          props.link.slug
+          "Stats for ",
+          React.createElement(
+            "a",
+            { href: "https://" + window.location.hostname + "/" + props.link.slug, target: "_blank" },
+            "/",
+            props.link.slug
+          )
         ),
         React.createElement(
           "div",
           { className: "meta" },
-          props.link.redirect
+          React.createElement(
+            "a",
+            { href: props.link.redirect, target: "_blank" },
+            props.link.redirect
+          )
         )
       )
     ),
@@ -366,13 +375,13 @@ var LinkItem = function (_React$Component) {
     value: function render() {
       return React.createElement(
         "div",
-        { className: "item" },
+        { className: "item", onClick: this.viewStats },
         React.createElement(
           "div",
           { className: "right floated content ui buttons" },
           React.createElement(
             "button",
-            { className: "ui button", onClick: this.viewStats },
+            { className: "ui button" },
             "Stats"
           )
         ),

@@ -103,7 +103,9 @@ const LinkStats = (props) => {
     }
     return (
       <tr>
-        <td data-tooltip={entry.timestamp} data-potision="bottom left">{new Date(entry.timestamp).toLocaleString()}</td>
+        <td data-tooltip={entry.timestamp} data-potision="bottom left">
+          {new Date(entry.timestamp).toLocaleString()}
+        </td>
         <td>{entry.uaParsed.browser}</td>
         <td>{entry.uaParsed.platform}</td>
         <td>{entry.uaParsed.isMobile ? 'YES' : 'NO'}</td>
@@ -117,8 +119,14 @@ const LinkStats = (props) => {
     <div>
       <div className="ui card" style={{width:'100%'}}>
         <div className="content">
-          <div className="header">Stats for /{props.link.slug}</div>
-          <div className="meta">{props.link.redirect}</div>
+          <div className="header">
+            Stats for <a href={`https://${window.location.hostname}/${props.link.slug}`} target="_blank">/{props.link.slug}</a>
+          </div>
+          <div className="meta">
+            <a href={props.link.redirect} target="_blank">
+              {props.link.redirect}
+            </a>
+          </div>
         </div>
       </div>
       <div className="ui statistics">
@@ -196,9 +204,9 @@ class LinkItem extends React.Component {
 
   render() {
     return (
-      <div className="item">
+      <div className="item" onClick={this.viewStats}>
         <div className="right floated content ui buttons">
-          <button className="ui button" onClick={this.viewStats}>Stats</button>
+          <button className="ui button">Stats</button>
         </div>
         <div className="content">
           <div className="header">/{this.props.slug}</div>
