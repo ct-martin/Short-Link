@@ -10,13 +10,13 @@ const makerPage = (req, res) =>
 const makeLink = (request, res) => {
   const req = request;
 
-  req.body.slug = `${req.body.slug}`;
+  req.body.slug = `${req.body.slug}`.toLowerCase();
   req.body.redirect = `${req.body.redirect}`;
 
   if (!req.body.slug || !req.body.redirect) {
     return res.status(400).json({ error: 'Error: All fields are required' });
   }
-  if (!req.body.slug.toLowerCase().match(/[a-z0-9-]+/)) {
+  if (!req.body.slug.match(/[a-z0-9-]+/)) {
     return res.status(400).json({ error:
       'Error: Only the hyphen (-) and alphanumeric characters are allowed in the slug.',
     });
