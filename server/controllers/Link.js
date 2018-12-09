@@ -133,7 +133,7 @@ const linkRedirect = (request, response) => {
   const req = request;
   const res = response;
 
-  req.params.slug = `${req.params.slug}`;
+  req.params.slug = `${req.params.slug}`.toLowerCase();
 
   if (!req.params.slug) {
     return res.status(400).json({ error: 'Error: No slug given' });
