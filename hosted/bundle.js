@@ -16,6 +16,11 @@ var handleShorten = function handleShorten(e) {
     return false;
   }
 
+  if (!$("#slug").val().toLowerCase().match(/[a-z0-9-]+/)) {
+    handleError("Error: Only the hyphen (-) and alphanumeric characters are allowed in the slug.");
+    return false;
+  }
+
   handleForm(e, function () {
     ReactDOM.render(React.createElement(
       "div",
@@ -404,7 +409,13 @@ var createUI = function createUI() {
       React.createElement(
         "div",
         { className: "header item" },
-        "URL Shortener"
+        "S",
+        React.createElement(
+          "small",
+          null,
+          "hort"
+        ),
+        "-Link Page"
       ),
       React.createElement(
         "a",

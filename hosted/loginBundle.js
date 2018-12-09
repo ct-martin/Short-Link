@@ -136,7 +136,13 @@ var createUI = function createUI() {
       React.createElement(
         "div",
         { className: "header item" },
-        "URL Shortener"
+        "S",
+        React.createElement(
+          "small",
+          null,
+          "hort"
+        ),
+        "-Link Page"
       ),
       React.createElement(
         "a",

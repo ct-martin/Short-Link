@@ -104,7 +104,7 @@ const createUI = () => {
   ReactDOM.render(
     <div>
       <nav className="ui top fixed menu">
-        <div className="header item">URL Shortener</div>
+        <div className="header item">S<small>hort</small>-Link Page</div>
         <a id="loginButton" className="active item" onClick={createLoginWindow}>
           Login
         </a>
