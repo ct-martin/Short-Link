@@ -116,7 +116,9 @@ const linkStats = (request, response) => {
           return res.status(400).json({ error: 'An error occurred' });
         }
 
-        return res.json({ link: doc, stats: docs2 });
+        const parsedDocs = docs2.map(item => LinkStat.LinkStatModel.toAPI(item));
+
+        return res.json({ link: doc, stats: parsedDocs });
       });
   });
 };
@@ -151,6 +153,7 @@ const linkRedirect = (request, response) => {
 
     const linkData = {
       slug: req.params.slug,
+      ua: req.useragent.source,
       //ip: req.ip,
     };
 

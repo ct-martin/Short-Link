@@ -80,17 +80,36 @@ const ShortenWindow = (props) => {
 };
 
 const LinkStats = (props) => {
-  let total = 0, countries = [];
+  let total = 0, unknown = 0, mobile = 0, countries = [], browsers = [], platforms = [];
   const statNodes = props.stats.map((entry) => {
     total++;
+    if(entry.ua === '') {
+      unknown++;
+    }
+    if(entry.uaParsed.mobile) {
+      mobile++;
+    }
+    if(entry.uaParsed.bot) {
+      bot++;
+    }
     if(!countries.includes(entry.country)) {
       countries.push(entry.country);
     }
+    if(!browsers.includes(entry.uaParsed.browser)) {
+      browsers.push(entry.uaParsed.browser);
+    }
+    if(!platforms.includes(entry.uaParsed.platform)) {
+      platforms.push(entry.uaParsed.platform);
+    }
     return (
       <tr>
-        <td>{entry.referrer}</td>
+        <td data-tooltip={entry.timestamp} data-potision="bottom left">{new Date(entry.timestamp).toLocaleString()}</td>
+        <td>{entry.uaParsed.browser}</td>
+        <td>{entry.uaParsed.platform}</td>
+        <td>{entry.uaParsed.isMobile ? 'YES' : 'NO'}</td>
+        <td>{entry.uaParsed.isBot ? 'YES' : 'NO'}</td>
         <td>{entry.country.toUpperCase()}</td>
-        <td>{entry.timestamp}</td>
+        <td>{entry.referrer}</td>
       </tr>
     );
   });
@@ -119,13 +138,41 @@ const LinkStats = (props) => {
             Countries
           </div>
         </div>
+        <div className="statistic">
+          <div className="value">
+            {Math.round(mobile / (total - unknown) * 100)}%
+          </div>
+          <div className="label">
+            Mobile Users
+          </div>
+        </div>
+        <div className="statistic">
+          <div className="value">
+            {browsers.length}
+          </div>
+          <div className="label">
+            Browsers
+          </div>
+        </div>
+        <div className="statistic">
+          <div className="value">
+            {platforms.length}
+          </div>
+          <div className="label">
+            Platforms
+          </div>
+        </div>
       </div>
       <table className="ui single line table">
         <thead>
           <tr>
-            <th>Referrer</th>
-            <th>Country*</th>
             <th>Timestamp</th>
+            <th>Browser</th>
+            <th>Platform</th>
+            <th>Mobile</th>
+            <th>Bot</th>
+            <th>Country*</th>
+            <th>Referrer</th>
           </tr>
         </thead>
         <tbody>
@@ -237,7 +284,7 @@ const createViewWindow = () => {
 const createStatsWindow = (slug) => {
   sendAjax('GET', `/admin/getStats/${slug}`, null, (data) => {
     ReactDOM.render(
-      <LinkStats link={data.link} stats={data.stats} />,
+      <LinkStats link={data.link} stats={data.stats.reverse()} />,
       document.querySelector("main")
     );
   });

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const _ = require('underscore');
+const useragent = require('express-useragent');
 
 let LinkStatModel = {};
 
@@ -18,6 +19,13 @@ const LinkStatSchema = new mongoose.Schema({
     type: String,
     trim: true,
     set: setName,
+    default: '',
+  },
+
+  // User Agent
+  ua: {
+    type: String,
+    trim: true,
     default: '',
   },
 
@@ -39,14 +47,25 @@ Potential future additions:
   * User Agent
     * Device (Windows, iOS, Android, Linux, etc.)
     * Browser (Chrome, Firefox, etc.)
-  * IP (this is a privacy risk though...)
-  * Region of country (APIs for this are limited...)
 */
+
+const parseUA = (ua) => {
+  const uaParsed = useragent.parse(ua);
+  return {
+    isMobile: uaParsed.isMobile,
+    isBot: uaParsed.isBot,
+    browser: uaParsed.browser,
+    os: uaParsed.os,
+    platform: uaParsed.platform,
+  };
+};
 
 LinkStatSchema.statics.toAPI = (doc) => ({
   slug: doc.slug,
   referrer: doc.referrer,
   country: doc.country,
+  ua: doc.ua || '',
+  uaParsed: doc.ua ? parseUA(doc.ua) : {},
   timestamp: doc.timestamp,
 });
 
@@ -56,7 +75,7 @@ LinkStatSchema.statics.findByDateRange = (slug, start, end, callback) => {
     timestamp: { $gte: start, $lte: end },
   };
 
-  return LinkStatModel.find(search).select('slug referrer country timestamp').exec(callback);
+  return LinkStatModel.find(search).select('slug referrer ua country timestamp').exec(callback);
 };
 
 LinkStatModel = mongoose.model('LinkStat', LinkStatSchema);

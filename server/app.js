@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const expressHandlebars = require('express-handlebars');
+const useragent = require('express-useragent');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const url = require('url');
@@ -62,6 +63,7 @@ app.use(session({
     httpOnly: true,
   },
 }));
+app.use(useragent.express());
 app.engine('handlebars', expressHandlebars({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/../views`);

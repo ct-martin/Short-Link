@@ -118,19 +118,58 @@ var ShortenWindow = function ShortenWindow(props) {
 
 var LinkStats = function LinkStats(props) {
   var total = 0,
-      countries = [];
+      unknown = 0,
+      mobile = 0,
+      countries = [],
+      browsers = [],
+      platforms = [];
   var statNodes = props.stats.map(function (entry) {
     total++;
+    if (entry.ua === '') {
+      unknown++;
+    }
+    if (entry.uaParsed.mobile) {
+      mobile++;
+    }
+    if (entry.uaParsed.bot) {
+      bot++;
+    }
     if (!countries.includes(entry.country)) {
       countries.push(entry.country);
+    }
+    if (!browsers.includes(entry.uaParsed.browser)) {
+      browsers.push(entry.uaParsed.browser);
+    }
+    if (!platforms.includes(entry.uaParsed.platform)) {
+      platforms.push(entry.uaParsed.platform);
     }
     return React.createElement(
       "tr",
       null,
       React.createElement(
         "td",
+        { "data-tooltip": entry.timestamp, "data-potision": "bottom left" },
+        new Date(entry.timestamp).toLocaleString()
+      ),
+      React.createElement(
+        "td",
         null,
-        entry.referrer
+        entry.uaParsed.browser
+      ),
+      React.createElement(
+        "td",
+        null,
+        entry.uaParsed.platform
+      ),
+      React.createElement(
+        "td",
+        null,
+        entry.uaParsed.isMobile ? 'YES' : 'NO'
+      ),
+      React.createElement(
+        "td",
+        null,
+        entry.uaParsed.isBot ? 'YES' : 'NO'
       ),
       React.createElement(
         "td",
@@ -140,7 +179,7 @@ var LinkStats = function LinkStats(props) {
       React.createElement(
         "td",
         null,
-        entry.timestamp
+        entry.referrer
       )
     );
   });
@@ -196,6 +235,49 @@ var LinkStats = function LinkStats(props) {
           { className: "label" },
           "Countries"
         )
+      ),
+      React.createElement(
+        "div",
+        { className: "statistic" },
+        React.createElement(
+          "div",
+          { className: "value" },
+          Math.round(mobile / (total - unknown) * 100),
+          "%"
+        ),
+        React.createElement(
+          "div",
+          { className: "label" },
+          "Mobile Users"
+        )
+      ),
+      React.createElement(
+        "div",
+        { className: "statistic" },
+        React.createElement(
+          "div",
+          { className: "value" },
+          browsers.length
+        ),
+        React.createElement(
+          "div",
+          { className: "label" },
+          "Browsers"
+        )
+      ),
+      React.createElement(
+        "div",
+        { className: "statistic" },
+        React.createElement(
+          "div",
+          { className: "value" },
+          platforms.length
+        ),
+        React.createElement(
+          "div",
+          { className: "label" },
+          "Platforms"
+        )
       )
     ),
     React.createElement(
@@ -210,7 +292,27 @@ var LinkStats = function LinkStats(props) {
           React.createElement(
             "th",
             null,
-            "Referrer"
+            "Timestamp"
+          ),
+          React.createElement(
+            "th",
+            null,
+            "Browser"
+          ),
+          React.createElement(
+            "th",
+            null,
+            "Platform"
+          ),
+          React.createElement(
+            "th",
+            null,
+            "Mobile"
+          ),
+          React.createElement(
+            "th",
+            null,
+            "Bot"
           ),
           React.createElement(
             "th",
@@ -220,7 +322,7 @@ var LinkStats = function LinkStats(props) {
           React.createElement(
             "th",
             null,
-            "Timestamp"
+            "Referrer"
           )
         )
       ),
@@ -389,7 +491,7 @@ var createViewWindow = function createViewWindow() {
 
 var createStatsWindow = function createStatsWindow(slug) {
   sendAjax('GET', "/admin/getStats/" + slug, null, function (data) {
-    ReactDOM.render(React.createElement(LinkStats, { link: data.link, stats: data.stats }), document.querySelector("main"));
+    ReactDOM.render(React.createElement(LinkStats, { link: data.link, stats: data.stats.reverse() }), document.querySelector("main"));
   });
 };
 
