@@ -246,10 +246,10 @@ var LinkStatsCharts = function (_React$Component) {
       if (entry.ua === '') {
         _this.unknown++;
       }
-      if (entry.uaParsed.mobile) {
+      if (entry.uaParsed.isMobile) {
         _this.mobile++;
       }
-      if (entry.uaParsed.bot) {
+      if (entry.uaParsed.isBot) {
         _this.bot++;
       }
       if (!_this.countries.hasOwnProperty(entry.country)) {
@@ -268,7 +268,7 @@ var LinkStatsCharts = function (_React$Component) {
         _this.platforms[entry.uaParsed.platform]++;
       }
     });
-    _this.mobilePercent = Math.round(_this.mobile / (_this.total - _this.unknown > 0 ? _this.total - _this.unknown : 1) * 100);
+    _this.mobilePercent = Math.round(_this.mobile / _this.total * 100);
     return _this;
   }
 
