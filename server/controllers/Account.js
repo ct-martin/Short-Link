@@ -35,12 +35,12 @@ const login = (request, response) => {
 };
 
 const signup = (request, response) => {
-  if(process.env.signup !== 'enable') {
-    return res.status(403).json({ error: 'Registration is disabled' });
-  }
-
   const req = request;
   const res = response;
+
+  if (process.env.signup !== 'enable') {
+    return res.status(403).json({ error: 'Registration is disabled' });
+  }
 
   // force cast to strings b/c security
   req.body.username = `${req.body.username}`;
