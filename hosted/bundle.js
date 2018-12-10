@@ -703,7 +703,7 @@ var ViewWindow = function ViewWindow(props) {
 
   return React.createElement(
     "div",
-    { className: "ui middle aligned divided list" },
+    { className: "ui middle aligned divided selection list" },
     linkNodes
   );
 };

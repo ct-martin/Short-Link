@@ -455,7 +455,7 @@ const ViewWindow = (props) => {
   });
 
   return (
-    <div className="ui middle aligned divided list">
+    <div className="ui middle aligned divided selection list">
       {linkNodes}
     </div>
   );
