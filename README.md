@@ -21,57 +21,51 @@ Paid tiers that give increasing information would be a quick profit model to imp
     * Free tier might only get summaries
   * Which stats are available (only clicks? country, referrer, etc.)
 
-## Templating
+## MVC/React/Templating
 
-I used Handlebars layout to abstract the base dependencies from the page itself.
+Handlebars abstracts the base dependencies from the page itself.
 Handlebars specifies which React bundle to load, and then React takes over rendering.
-
-## MVC
-
 All views (inc. dynamic) are generated from React and all data is taken from API requests that return JSON arrays.
 
 ## Mongo Storage
 
 Mongo stores accounts, shortened links, & link stats
 
-## Above & Beyond
+## Above & Beyond (post-Project 2)
 
-* React used
-* Tracking of each link click (referrer, country of origin, & timestamp)
-* If behind Cloudflare w/ IP Geolocation on it will track country codes
-  * Currently have hooked up to my site loosely via Cloudflare MitM
+* Deployed on Dokku
+* Charts
 
-## Difference-ness from DomoMaker
+## Difference-ness from Project 2
 
-The code is based on DomoMaker-E, but most of it was gutted.
-For example, the front-end is almost entirely re-written.
+* Support for Dokku hosting
+* Validation of slugs & redirect links
+  * Slugs are lowercased for cleanliness
+* Fixed password changing validation
+* User Agent tracking
+* Many UI improvements
+* Env variable for enabling registration
+* CSV Export
+* Charts
 
-My estimate for how close to DomoMaker this is:
-* Approx. 1/3 DomoMaker (app.js, most of Account backend)
-* Approx. 1/3 heavily-refactored DomoMaker (similar, but different; such as the Link model)
-* Approx. 1/3 completely or near-completely original (such as the handlebars templates, React code, & link tracking)
-
-These numbers are ballparks, use your own judgement
-
-## 6 Views
+## 8 Views
 
 1. Login
 2. Signup
 3. Password change
 4. Shorten URL
 5. View URLs
-6. URL Statistics
+6. URL Statistics Summary/Charts
+7. URL Statistics Table
+8. URL Statistics CSV
 
 ## Feature ideas
 
-* Tracking & analysis of user agent header
-  * Redirect based on platform
-* Sanitization of URL slugs & redirect URLs
+* Redirect based on user agent (e.g. Android/iOS to respective store, by country, etc.)
+* Referrer analytics
 * Clicks in general vs. unique users (using session)
-* Charts of stats
 * Custom subdomains (instead of being subdomain-agnostic)
 * Implementation of user tiers (admin, paid, free)
   * Paid tier features, such as scheduling of links & no duration limit
-* Deploy on my site (I wrote this because I actually want to use this)
-  * Registration toggle (via environment variable?)
+* Email/OAuth registration & verification
 * Domain & string blacklists
