@@ -134,10 +134,10 @@ class LinkStatsCharts extends React.Component {
       if(entry.ua === '') {
         this.unknown++;
       }
-      if(entry.uaParsed.mobile) {
+      if(entry.uaParsed.isMobile) {
         this.mobile++;
       }
-      if(entry.uaParsed.bot) {
+      if(entry.uaParsed.isBot) {
         this.bot++;
       }
       if(!this.countries.hasOwnProperty(entry.country)) {
