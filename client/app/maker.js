@@ -118,73 +118,206 @@ const LinkStatsTable = (props) => {
   );
 };
 
-const LinkStatsCharts = (props) => {
-  let total = 0, unknown = 0, mobile = 0, countries = [], browsers = [], platforms = [];
-  props.stats.forEach((entry) => {
-    total++;
-    if(entry.ua === '') {
-      unknown++;
-    }
-    if(entry.uaParsed.mobile) {
-      mobile++;
-    }
-    if(entry.uaParsed.bot) {
-      bot++;
-    }
-    if(!countries.includes(entry.country)) {
-      countries.push(entry.country);
-    }
-    if(!browsers.includes(entry.uaParsed.browser)) {
-      browsers.push(entry.uaParsed.browser);
-    }
-    if(!platforms.includes(entry.uaParsed.platform)) {
-      platforms.push(entry.uaParsed.platform);
-    }
-  });
-  return (
-    <div className="ui statistics">
-      <div className="statistic">
-        <div className="value">
-          {total}
+class LinkStatsCharts extends React.Component {
+  constructor(props) {
+    super(props);
+    this.draw = this.draw.bind(this);
+
+    this.total = 0;
+    this.unknown = 0;
+    this.mobile = 0;
+    this.countries = {};
+    this.browsers = {};
+    this.platforms = {};
+    this.props.stats.forEach((entry) => {
+      this.total++;
+      if(entry.ua === '') {
+        this.unknown++;
+      }
+      if(entry.uaParsed.mobile) {
+        this.mobile++;
+      }
+      if(entry.uaParsed.bot) {
+        this.bot++;
+      }
+      if(!this.countries.hasOwnProperty(entry.country)) {
+        this.countries[entry.country] = 1;
+      } else {
+        this.countries[entry.country]++;
+      }
+      if(!this.browsers.hasOwnProperty(entry.uaParsed.browser)) {
+        this.browsers[entry.uaParsed.browser] = 1;
+      } else {
+        this.browsers[entry.uaParsed.browser]++;
+      }
+      if(!this.platforms.hasOwnProperty(entry.uaParsed.platform)) {
+        this.platforms[entry.uaParsed.platform] = 1;
+      } else {
+        this.platforms[entry.uaParsed.platform]++;
+      }
+    });
+  }
+
+  componentDidMount() {
+    this.draw();
+  }
+
+  draw() {
+    const canvasCoT = document.querySelector('#statChartClicksOverTime');
+    const ctxCoT = canvasCoT.getContext('2d');
+    let chartCoT = new Chart(ctxCoT, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Total Clicks',
+          data: this.props.stats.map((item) => ({x:new Date(item.timestamp),y:1})),
+          backgroundColor: 'rgba(0,0,0,0.87)',
+        }]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            type: 'time',
+            time: {
+              unit: 'hour',
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              min: 0,
+              suggestedMax: 1.1,
+            }
+          }]
+        }
+      }
+    });
+    const colors = [
+      '#21ba45',
+      '#db2828',
+      '#2185d0',
+      '#fbbd08',
+      '#6435c9',
+      '#00b5ad',
+      '#767676'
+    ];
+    const canvasCountries = document.querySelector('#statChartCountries');
+    const ctxCountries = canvasCountries.getContext('2d');
+    let chartCountries = new Chart(ctxCountries, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: Object.entries(this.countries).map((item) => item[1]),
+          backgroundColor: colors,
+        }],
+        labels: Object.entries(this.countries).map((item) => item[0].toUpperCase()),
+      },
+    });
+    const canvasBrowsers = document.querySelector('#statChartBrowsers');
+    const ctxBrowsers = canvasBrowsers.getContext('2d');
+    let chartBrowsers = new Chart(ctxBrowsers, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: Object.entries(this.browsers).map((item) => item[1]),
+          backgroundColor: colors,
+        }],
+        labels: Object.entries(this.browsers).map((item) => item[0]),
+      },
+    });
+    const canvasPlatforms = document.querySelector('#statChartPlatforms');
+    const ctxPlatforms = canvasPlatforms.getContext('2d');
+    let chartPlatforms = new Chart(ctxPlatforms, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: Object.entries(this.platforms).map((item) => item[1]),
+          backgroundColor: colors,
+        }],
+        labels: Object.entries(this.platforms).map((item) => item[0]),
+      },
+    });
+    const canvasMobileUsers = document.querySelector('#statChartMobileUsers');
+    const ctxMobileUsers = canvasMobileUsers.getContext('2d');
+    let chartMobileUsers = new Chart(ctxMobileUsers, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [
+            Math.round(this.mobile / (this.total - this.unknown) * 100),
+            100 - Math.round(this.mobile / (this.total - this.unknown) * 100)
+          ],
+          backgroundColor: colors,
+        }],
+        labels: ['Mobile Users', 'Non-Mobile Users'],
+      },
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <div className="ui statistics">
+          <div className="statistic">
+            <div className="value">
+              {this.total}
+            </div>
+            <div className="label">
+              Total Clicks
+            </div>
+          </div>
+          <div className="statistic">
+            <div className="value">
+              {Object.keys(this.countries).length}
+            </div>
+            <div className="label">
+              Countries
+            </div>
+          </div>
+          <div className="statistic">
+            <div className="value">
+              {Math.round(this.mobile / (this.total - this.unknown) * 100)}%
+            </div>
+            <div className="label">
+              Mobile Users
+            </div>
+          </div>
+          <div className="statistic">
+            <div className="value">
+              {Object.keys(this.browsers).length}
+            </div>
+            <div className="label">
+              Browsers
+            </div>
+          </div>
+          <div className="statistic">
+            <div className="value">
+              {Object.keys(this.platforms).length}
+            </div>
+            <div className="label">
+              Platforms
+            </div>
+          </div>
         </div>
-        <div className="label">
-          Total Clicks
+        <div className="doubling ui grid">
+          <div className="sixteen wide column">
+            <canvas id="statChartClicksOverTime" style={{width:'100%',height:'200px'}}></canvas>
+          </div>
+          <div className="eight wide column">
+            <canvas id="statChartCountries" style={{width:'100%',height:'200px'}}></canvas>
+          </div>
+          <div className="eight wide column">
+            <canvas id="statChartMobileUsers" style={{width:'100%',height:'200px'}}></canvas>
+          </div>
+          <div className="eight wide column">
+            <canvas id="statChartBrowsers" style={{width:'100%',height:'200px'}}></canvas>
+          </div>
+          <div className="eight wide column">
+            <canvas id="statChartPlatforms" style={{width:'100%',height:'200px'}}></canvas>
+          </div>
         </div>
       </div>
-      <div className="statistic">
-        <div className="value">
-          {countries.length}
-        </div>
-        <div className="label">
-          Countries
-        </div>
-      </div>
-      <div className="statistic">
-        <div className="value">
-          {Math.round(mobile / (total - unknown) * 100)}%
-        </div>
-        <div className="label">
-          Mobile Users
-        </div>
-      </div>
-      <div className="statistic">
-        <div className="value">
-          {browsers.length}
-        </div>
-        <div className="label">
-          Browsers
-        </div>
-      </div>
-      <div className="statistic">
-        <div className="value">
-          {platforms.length}
-        </div>
-        <div className="label">
-          Platforms
-        </div>
-      </div>
-    </div>
-  );
+    );
+  }
 };
 
 const LinkStatsCSV = (props) => {

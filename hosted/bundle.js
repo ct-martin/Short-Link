@@ -225,110 +225,270 @@ var LinkStatsTable = function LinkStatsTable(props) {
   );
 };
 
-var LinkStatsCharts = function LinkStatsCharts(props) {
-  var total = 0,
-      unknown = 0,
-      mobile = 0,
-      countries = [],
-      browsers = [],
-      platforms = [];
-  props.stats.forEach(function (entry) {
-    total++;
-    if (entry.ua === '') {
-      unknown++;
+var LinkStatsCharts = function (_React$Component) {
+  _inherits(LinkStatsCharts, _React$Component);
+
+  function LinkStatsCharts(props) {
+    _classCallCheck(this, LinkStatsCharts);
+
+    var _this = _possibleConstructorReturn(this, (LinkStatsCharts.__proto__ || Object.getPrototypeOf(LinkStatsCharts)).call(this, props));
+
+    _this.draw = _this.draw.bind(_this);
+
+    _this.total = 0;
+    _this.unknown = 0;
+    _this.mobile = 0;
+    _this.countries = {};
+    _this.browsers = {};
+    _this.platforms = {};
+    _this.props.stats.forEach(function (entry) {
+      _this.total++;
+      if (entry.ua === '') {
+        _this.unknown++;
+      }
+      if (entry.uaParsed.mobile) {
+        _this.mobile++;
+      }
+      if (entry.uaParsed.bot) {
+        _this.bot++;
+      }
+      if (!_this.countries.hasOwnProperty(entry.country)) {
+        _this.countries[entry.country] = 1;
+      } else {
+        _this.countries[entry.country]++;
+      }
+      if (!_this.browsers.hasOwnProperty(entry.uaParsed.browser)) {
+        _this.browsers[entry.uaParsed.browser] = 1;
+      } else {
+        _this.browsers[entry.uaParsed.browser]++;
+      }
+      if (!_this.platforms.hasOwnProperty(entry.uaParsed.platform)) {
+        _this.platforms[entry.uaParsed.platform] = 1;
+      } else {
+        _this.platforms[entry.uaParsed.platform]++;
+      }
+    });
+    return _this;
+  }
+
+  _createClass(LinkStatsCharts, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.draw();
     }
-    if (entry.uaParsed.mobile) {
-      mobile++;
+  }, {
+    key: "draw",
+    value: function draw() {
+      var canvasCoT = document.querySelector('#statChartClicksOverTime');
+      var ctxCoT = canvasCoT.getContext('2d');
+      var chartCoT = new Chart(ctxCoT, {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            label: 'Total Clicks',
+            data: this.props.stats.map(function (item) {
+              return { x: new Date(item.timestamp), y: 1 };
+            }),
+            backgroundColor: 'rgba(0,0,0,0.87)'
+          }]
+        },
+        options: {
+          scales: {
+            xAxes: [{
+              type: 'time',
+              time: {
+                unit: 'hour'
+              }
+            }],
+            yAxes: [{
+              ticks: {
+                min: 0,
+                suggestedMax: 1.1
+              }
+            }]
+          }
+        }
+      });
+      var colors = ['#21ba45', '#db2828', '#2185d0', '#fbbd08', '#6435c9', '#00b5ad', '#767676'];
+      var canvasCountries = document.querySelector('#statChartCountries');
+      var ctxCountries = canvasCountries.getContext('2d');
+      var chartCountries = new Chart(ctxCountries, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: Object.entries(this.countries).map(function (item) {
+              return item[1];
+            }),
+            backgroundColor: colors
+          }],
+          labels: Object.entries(this.countries).map(function (item) {
+            return item[0].toUpperCase();
+          })
+        }
+      });
+      var canvasBrowsers = document.querySelector('#statChartBrowsers');
+      var ctxBrowsers = canvasBrowsers.getContext('2d');
+      var chartBrowsers = new Chart(ctxBrowsers, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: Object.entries(this.browsers).map(function (item) {
+              return item[1];
+            }),
+            backgroundColor: colors
+          }],
+          labels: Object.entries(this.browsers).map(function (item) {
+            return item[0];
+          })
+        }
+      });
+      var canvasPlatforms = document.querySelector('#statChartPlatforms');
+      var ctxPlatforms = canvasPlatforms.getContext('2d');
+      var chartPlatforms = new Chart(ctxPlatforms, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: Object.entries(this.platforms).map(function (item) {
+              return item[1];
+            }),
+            backgroundColor: colors
+          }],
+          labels: Object.entries(this.platforms).map(function (item) {
+            return item[0];
+          })
+        }
+      });
+      var canvasMobileUsers = document.querySelector('#statChartMobileUsers');
+      var ctxMobileUsers = canvasMobileUsers.getContext('2d');
+      var chartMobileUsers = new Chart(ctxMobileUsers, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: [Math.round(this.mobile / (this.total - this.unknown) * 100), 100 - Math.round(this.mobile / (this.total - this.unknown) * 100)],
+            backgroundColor: colors
+          }],
+          labels: ['Mobile Users', 'Non-Mobile Users']
+        }
+      });
     }
-    if (entry.uaParsed.bot) {
-      bot++;
+  }, {
+    key: "render",
+    value: function render() {
+      return React.createElement(
+        "div",
+        null,
+        React.createElement(
+          "div",
+          { className: "ui statistics" },
+          React.createElement(
+            "div",
+            { className: "statistic" },
+            React.createElement(
+              "div",
+              { className: "value" },
+              this.total
+            ),
+            React.createElement(
+              "div",
+              { className: "label" },
+              "Total Clicks"
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: "statistic" },
+            React.createElement(
+              "div",
+              { className: "value" },
+              Object.keys(this.countries).length
+            ),
+            React.createElement(
+              "div",
+              { className: "label" },
+              "Countries"
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: "statistic" },
+            React.createElement(
+              "div",
+              { className: "value" },
+              Math.round(this.mobile / (this.total - this.unknown) * 100),
+              "%"
+            ),
+            React.createElement(
+              "div",
+              { className: "label" },
+              "Mobile Users"
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: "statistic" },
+            React.createElement(
+              "div",
+              { className: "value" },
+              Object.keys(this.browsers).length
+            ),
+            React.createElement(
+              "div",
+              { className: "label" },
+              "Browsers"
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: "statistic" },
+            React.createElement(
+              "div",
+              { className: "value" },
+              Object.keys(this.platforms).length
+            ),
+            React.createElement(
+              "div",
+              { className: "label" },
+              "Platforms"
+            )
+          )
+        ),
+        React.createElement(
+          "div",
+          { className: "doubling ui grid" },
+          React.createElement(
+            "div",
+            { className: "sixteen wide column" },
+            React.createElement("canvas", { id: "statChartClicksOverTime", style: { width: '100%', height: '200px' } })
+          ),
+          React.createElement(
+            "div",
+            { className: "eight wide column" },
+            React.createElement("canvas", { id: "statChartCountries", style: { width: '100%', height: '200px' } })
+          ),
+          React.createElement(
+            "div",
+            { className: "eight wide column" },
+            React.createElement("canvas", { id: "statChartMobileUsers", style: { width: '100%', height: '200px' } })
+          ),
+          React.createElement(
+            "div",
+            { className: "eight wide column" },
+            React.createElement("canvas", { id: "statChartBrowsers", style: { width: '100%', height: '200px' } })
+          ),
+          React.createElement(
+            "div",
+            { className: "eight wide column" },
+            React.createElement("canvas", { id: "statChartPlatforms", style: { width: '100%', height: '200px' } })
+          )
+        )
+      );
     }
-    if (!countries.includes(entry.country)) {
-      countries.push(entry.country);
-    }
-    if (!browsers.includes(entry.uaParsed.browser)) {
-      browsers.push(entry.uaParsed.browser);
-    }
-    if (!platforms.includes(entry.uaParsed.platform)) {
-      platforms.push(entry.uaParsed.platform);
-    }
-  });
-  return React.createElement(
-    "div",
-    { className: "ui statistics" },
-    React.createElement(
-      "div",
-      { className: "statistic" },
-      React.createElement(
-        "div",
-        { className: "value" },
-        total
-      ),
-      React.createElement(
-        "div",
-        { className: "label" },
-        "Total Clicks"
-      )
-    ),
-    React.createElement(
-      "div",
-      { className: "statistic" },
-      React.createElement(
-        "div",
-        { className: "value" },
-        countries.length
-      ),
-      React.createElement(
-        "div",
-        { className: "label" },
-        "Countries"
-      )
-    ),
-    React.createElement(
-      "div",
-      { className: "statistic" },
-      React.createElement(
-        "div",
-        { className: "value" },
-        Math.round(mobile / (total - unknown) * 100),
-        "%"
-      ),
-      React.createElement(
-        "div",
-        { className: "label" },
-        "Mobile Users"
-      )
-    ),
-    React.createElement(
-      "div",
-      { className: "statistic" },
-      React.createElement(
-        "div",
-        { className: "value" },
-        browsers.length
-      ),
-      React.createElement(
-        "div",
-        { className: "label" },
-        "Browsers"
-      )
-    ),
-    React.createElement(
-      "div",
-      { className: "statistic" },
-      React.createElement(
-        "div",
-        { className: "value" },
-        platforms.length
-      ),
-      React.createElement(
-        "div",
-        { className: "label" },
-        "Platforms"
-      )
-    )
-  );
-};
+  }]);
+
+  return LinkStatsCharts;
+}(React.Component);
+
+;
 
 var LinkStatsCSV = function LinkStatsCSV(props) {
   var statNodes = props.stats.map(function (entry) {
@@ -346,31 +506,31 @@ var LinkStatsCSV = function LinkStatsCSV(props) {
   );
 };
 
-var LinkStats = function (_React$Component) {
-  _inherits(LinkStats, _React$Component);
+var LinkStats = function (_React$Component2) {
+  _inherits(LinkStats, _React$Component2);
 
   function LinkStats(props) {
     _classCallCheck(this, LinkStats);
 
-    var _this = _possibleConstructorReturn(this, (LinkStats.__proto__ || Object.getPrototypeOf(LinkStats)).call(this, props));
+    var _this2 = _possibleConstructorReturn(this, (LinkStats.__proto__ || Object.getPrototypeOf(LinkStats)).call(this, props));
 
-    _this.viewChart = _this.viewChart.bind(_this);
-    _this.viewTable = _this.viewTable.bind(_this);
-    _this.viewCSV = _this.viewCSV.bind(_this);
-    _this.timedData = _this.props.link.timedEnd ? React.createElement(
+    _this2.viewChart = _this2.viewChart.bind(_this2);
+    _this2.viewTable = _this2.viewTable.bind(_this2);
+    _this2.viewCSV = _this2.viewCSV.bind(_this2);
+    _this2.timedData = _this2.props.link.timedEnd ? React.createElement(
       "p",
       null,
       "Open ",
-      new Date(_this.props.link.start).toLocaleString(),
+      new Date(_this2.props.link.start).toLocaleString(),
       " - ",
       new Date(props.link.end).toLocaleString()
     ) : React.createElement(
       "p",
       null,
       "Opened ",
-      new Date(_this.props.link.start).toLocaleString()
+      new Date(_this2.props.link.start).toLocaleString()
     );
-    return _this;
+    return _this2;
   }
 
   _createClass(LinkStats, [{
@@ -462,16 +622,16 @@ var LinkStats = function (_React$Component) {
 
 ;
 
-var LinkItem = function (_React$Component2) {
-  _inherits(LinkItem, _React$Component2);
+var LinkItem = function (_React$Component3) {
+  _inherits(LinkItem, _React$Component3);
 
   function LinkItem(props) {
     _classCallCheck(this, LinkItem);
 
-    var _this2 = _possibleConstructorReturn(this, (LinkItem.__proto__ || Object.getPrototypeOf(LinkItem)).call(this, props));
+    var _this3 = _possibleConstructorReturn(this, (LinkItem.__proto__ || Object.getPrototypeOf(LinkItem)).call(this, props));
 
-    _this2.viewStats = _this2.viewStats.bind(_this2);
-    return _this2;
+    _this3.viewStats = _this3.viewStats.bind(_this3);
+    return _this3;
   }
 
   _createClass(LinkItem, [{
