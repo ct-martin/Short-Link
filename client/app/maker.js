@@ -156,7 +156,7 @@ class LinkStatsCharts extends React.Component {
         this.platforms[entry.uaParsed.platform]++;
       }
     });
-    this.mobilePercent = Math.round(this.mobile / ((this.total - this.unknown) > 0 ? (this.total - this.unknown) : 1) * 100);
+    this.mobilePercent = Math.round(this.mobile / this.total * 100);
   }
 
   componentDidMount() {
