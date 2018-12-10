@@ -79,33 +79,8 @@ const ShortenWindow = (props) => {
   );
 };
 
-const LinkStats = (props) => {
-  let total = 0, unknown = 0, mobile = 0, countries = [], browsers = [], platforms = [];
-  const timedData = props.link.timedEnd ? (
-    <p>Open {new Date(props.link.start).toLocaleString()} - {new Date(props.link.end).toLocaleString()}</p>
-  ) : (
-    <p>Opened {new Date(props.link.start).toLocaleString()}</p>
-  );
+const LinkStatsTable = (props) => {
   const statNodes = props.stats.map((entry) => {
-    total++;
-    if(entry.ua === '') {
-      unknown++;
-    }
-    if(entry.uaParsed.mobile) {
-      mobile++;
-    }
-    if(entry.uaParsed.bot) {
-      bot++;
-    }
-    if(!countries.includes(entry.country)) {
-      countries.push(entry.country);
-    }
-    if(!browsers.includes(entry.uaParsed.browser)) {
-      browsers.push(entry.uaParsed.browser);
-    }
-    if(!platforms.includes(entry.uaParsed.platform)) {
-      platforms.push(entry.uaParsed.platform);
-    }
     return (
       <tr>
         <td data-tooltip={entry.timestamp} data-potision="bottom left">
@@ -120,63 +95,8 @@ const LinkStats = (props) => {
       </tr>
     );
   });
-  return(
+  return (
     <div>
-      <div className="ui card" style={{width:'100%'}}>
-        <div className="content">
-          <div className="header">
-            Stats for <a href={`https://${window.location.hostname}/${props.link.slug}`} target="_blank">/{props.link.slug}</a>
-          </div>
-          <div className="meta">
-            <a href={props.link.redirect} target="_blank">
-              {props.link.redirect}
-            </a>
-            {timedData}
-          </div>
-        </div>
-      </div>
-      <div className="ui statistics">
-        <div className="statistic">
-          <div className="value">
-            {total}
-          </div>
-          <div className="label">
-            Total Clicks
-          </div>
-        </div>
-        <div className="statistic">
-          <div className="value">
-            {countries.length}
-          </div>
-          <div className="label">
-            Countries
-          </div>
-        </div>
-        <div className="statistic">
-          <div className="value">
-            {Math.round(mobile / (total - unknown) * 100)}%
-          </div>
-          <div className="label">
-            Mobile Users
-          </div>
-        </div>
-        <div className="statistic">
-          <div className="value">
-            {browsers.length}
-          </div>
-          <div className="label">
-            Browsers
-          </div>
-        </div>
-        <div className="statistic">
-          <div className="value">
-            {platforms.length}
-          </div>
-          <div className="label">
-            Platforms
-          </div>
-        </div>
-      </div>
       <table className="ui single line table">
         <thead>
           <tr>
@@ -196,6 +116,166 @@ const LinkStats = (props) => {
       <p><i>*: Country requires using Cloudflare w/ IP Geolocation turned on. "XX" means unknown.</i></p>
     </div>
   );
+};
+
+const LinkStatsCharts = (props) => {
+  let total = 0, unknown = 0, mobile = 0, countries = [], browsers = [], platforms = [];
+  props.stats.forEach((entry) => {
+    total++;
+    if(entry.ua === '') {
+      unknown++;
+    }
+    if(entry.uaParsed.mobile) {
+      mobile++;
+    }
+    if(entry.uaParsed.bot) {
+      bot++;
+    }
+    if(!countries.includes(entry.country)) {
+      countries.push(entry.country);
+    }
+    if(!browsers.includes(entry.uaParsed.browser)) {
+      browsers.push(entry.uaParsed.browser);
+    }
+    if(!platforms.includes(entry.uaParsed.platform)) {
+      platforms.push(entry.uaParsed.platform);
+    }
+  });
+  return (
+    <div className="ui statistics">
+      <div className="statistic">
+        <div className="value">
+          {total}
+        </div>
+        <div className="label">
+          Total Clicks
+        </div>
+      </div>
+      <div className="statistic">
+        <div className="value">
+          {countries.length}
+        </div>
+        <div className="label">
+          Countries
+        </div>
+      </div>
+      <div className="statistic">
+        <div className="value">
+          {Math.round(mobile / (total - unknown) * 100)}%
+        </div>
+        <div className="label">
+          Mobile Users
+        </div>
+      </div>
+      <div className="statistic">
+        <div className="value">
+          {browsers.length}
+        </div>
+        <div className="label">
+          Browsers
+        </div>
+      </div>
+      <div className="statistic">
+        <div className="value">
+          {platforms.length}
+        </div>
+        <div className="label">
+          Platforms
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LinkStatsCSV = (props) => {
+  const statNodes = props.stats.map((entry) => {
+    return (
+      `${entry.timestamp},"${entry.ua}","${entry.country.toUpperCase()}","${entry.referrer}"`
+    );
+  });
+  statNodes.unshift("Timestamp,UA,Country,Referrer");
+  return (
+    <div className="ui form">
+      <div className="field">
+        <textarea readonly value={statNodes.join("\n")} />
+      </div>
+    </div>
+  );
+};
+
+class LinkStats extends React.Component {
+  constructor(props) {
+    super(props);
+    this.viewChart = this.viewChart.bind(this);
+    this.viewTable = this.viewTable.bind(this);
+    this.viewCSV = this.viewCSV.bind(this);
+    this.timedData = this.props.link.timedEnd ? (
+      <p>Open {new Date(this.props.link.start).toLocaleString()} - {new Date(props.link.end).toLocaleString()}</p>
+    ) : (
+      <p>Opened {new Date(this.props.link.start).toLocaleString()}</p>
+    );
+  }
+
+  viewChart() {
+    $("#statsNav a").removeClass("active");
+    $("#statsSummary").addClass("active");
+    ReactDOM.render(
+      <LinkStatsCharts link={this.props.link} stats={this.props.stats} />,
+      document.querySelector('#statsContainer')
+    );
+  }
+
+  viewTable() {
+    $("#statsNav a").removeClass("active");
+    $("#statsTable").addClass("active");
+    ReactDOM.render(
+      <LinkStatsTable link={this.props.link} stats={this.props.stats} />,
+      document.querySelector('#statsContainer')
+    );
+  }
+
+  viewCSV() {
+    $("#statsNav a").removeClass("active");
+    $("#statsCSV").addClass("active");
+    ReactDOM.render(
+      <LinkStatsCSV link={this.props.link} stats={this.props.stats} />,
+      document.querySelector('#statsContainer')
+    );
+  }
+
+  render() {
+    return(
+      <div>
+        <div className="ui card" style={{width:'100%'}}>
+          <div className="content">
+            <div className="header">
+              Stats for <a href={`https://${window.location.hostname}/${this.props.link.slug}`} target="_blank">/{this.props.link.slug}</a>
+            </div>
+            <div className="meta">
+              <a href={this.props.link.redirect} target="_blank">
+                {this.props.link.redirect}
+              </a>
+              {this.timedData}
+            </div>
+          </div>
+        </div>
+        <div id="statsNav" className="ui secondary pointing menu">
+          <a id="statsSummary" className="active item" onClick={this.viewChart}>
+            Summary
+          </a>
+          <a id="statsTable" className="item" onClick={this.viewTable}>
+            Table
+          </a>
+          <a id="statsCSV" className="item" onClick={this.viewCSV}>
+            CSV
+          </a>
+        </div>
+        <div id="statsContainer">
+          <LinkStatsCharts link={this.props.link} stats={this.props.stats} />
+        </div>
+      </div>
+    );
+  }
 };
 
 class LinkItem extends React.Component {

@@ -116,46 +116,8 @@ var ShortenWindow = function ShortenWindow(props) {
   );
 };
 
-var LinkStats = function LinkStats(props) {
-  var total = 0,
-      unknown = 0,
-      mobile = 0,
-      countries = [],
-      browsers = [],
-      platforms = [];
-  var timedData = props.link.timedEnd ? React.createElement(
-    "p",
-    null,
-    "Open ",
-    new Date(props.link.start).toLocaleString(),
-    " - ",
-    new Date(props.link.end).toLocaleString()
-  ) : React.createElement(
-    "p",
-    null,
-    "Opened ",
-    new Date(props.link.start).toLocaleString()
-  );
+var LinkStatsTable = function LinkStatsTable(props) {
   var statNodes = props.stats.map(function (entry) {
-    total++;
-    if (entry.ua === '') {
-      unknown++;
-    }
-    if (entry.uaParsed.mobile) {
-      mobile++;
-    }
-    if (entry.uaParsed.bot) {
-      bot++;
-    }
-    if (!countries.includes(entry.country)) {
-      countries.push(entry.country);
-    }
-    if (!browsers.includes(entry.uaParsed.browser)) {
-      browsers.push(entry.uaParsed.browser);
-    }
-    if (!platforms.includes(entry.uaParsed.platform)) {
-      platforms.push(entry.uaParsed.platform);
-    }
     return React.createElement(
       "tr",
       null,
@@ -199,110 +161,6 @@ var LinkStats = function LinkStats(props) {
   return React.createElement(
     "div",
     null,
-    React.createElement(
-      "div",
-      { className: "ui card", style: { width: '100%' } },
-      React.createElement(
-        "div",
-        { className: "content" },
-        React.createElement(
-          "div",
-          { className: "header" },
-          "Stats for ",
-          React.createElement(
-            "a",
-            { href: "https://" + window.location.hostname + "/" + props.link.slug, target: "_blank" },
-            "/",
-            props.link.slug
-          )
-        ),
-        React.createElement(
-          "div",
-          { className: "meta" },
-          React.createElement(
-            "a",
-            { href: props.link.redirect, target: "_blank" },
-            props.link.redirect
-          ),
-          timedData
-        )
-      )
-    ),
-    React.createElement(
-      "div",
-      { className: "ui statistics" },
-      React.createElement(
-        "div",
-        { className: "statistic" },
-        React.createElement(
-          "div",
-          { className: "value" },
-          total
-        ),
-        React.createElement(
-          "div",
-          { className: "label" },
-          "Total Clicks"
-        )
-      ),
-      React.createElement(
-        "div",
-        { className: "statistic" },
-        React.createElement(
-          "div",
-          { className: "value" },
-          countries.length
-        ),
-        React.createElement(
-          "div",
-          { className: "label" },
-          "Countries"
-        )
-      ),
-      React.createElement(
-        "div",
-        { className: "statistic" },
-        React.createElement(
-          "div",
-          { className: "value" },
-          Math.round(mobile / (total - unknown) * 100),
-          "%"
-        ),
-        React.createElement(
-          "div",
-          { className: "label" },
-          "Mobile Users"
-        )
-      ),
-      React.createElement(
-        "div",
-        { className: "statistic" },
-        React.createElement(
-          "div",
-          { className: "value" },
-          browsers.length
-        ),
-        React.createElement(
-          "div",
-          { className: "label" },
-          "Browsers"
-        )
-      ),
-      React.createElement(
-        "div",
-        { className: "statistic" },
-        React.createElement(
-          "div",
-          { className: "value" },
-          platforms.length
-        ),
-        React.createElement(
-          "div",
-          { className: "label" },
-          "Platforms"
-        )
-      )
-    ),
     React.createElement(
       "table",
       { className: "ui single line table" },
@@ -367,16 +225,253 @@ var LinkStats = function LinkStats(props) {
   );
 };
 
-var LinkItem = function (_React$Component) {
-  _inherits(LinkItem, _React$Component);
+var LinkStatsCharts = function LinkStatsCharts(props) {
+  var total = 0,
+      unknown = 0,
+      mobile = 0,
+      countries = [],
+      browsers = [],
+      platforms = [];
+  props.stats.forEach(function (entry) {
+    total++;
+    if (entry.ua === '') {
+      unknown++;
+    }
+    if (entry.uaParsed.mobile) {
+      mobile++;
+    }
+    if (entry.uaParsed.bot) {
+      bot++;
+    }
+    if (!countries.includes(entry.country)) {
+      countries.push(entry.country);
+    }
+    if (!browsers.includes(entry.uaParsed.browser)) {
+      browsers.push(entry.uaParsed.browser);
+    }
+    if (!platforms.includes(entry.uaParsed.platform)) {
+      platforms.push(entry.uaParsed.platform);
+    }
+  });
+  return React.createElement(
+    "div",
+    { className: "ui statistics" },
+    React.createElement(
+      "div",
+      { className: "statistic" },
+      React.createElement(
+        "div",
+        { className: "value" },
+        total
+      ),
+      React.createElement(
+        "div",
+        { className: "label" },
+        "Total Clicks"
+      )
+    ),
+    React.createElement(
+      "div",
+      { className: "statistic" },
+      React.createElement(
+        "div",
+        { className: "value" },
+        countries.length
+      ),
+      React.createElement(
+        "div",
+        { className: "label" },
+        "Countries"
+      )
+    ),
+    React.createElement(
+      "div",
+      { className: "statistic" },
+      React.createElement(
+        "div",
+        { className: "value" },
+        Math.round(mobile / (total - unknown) * 100),
+        "%"
+      ),
+      React.createElement(
+        "div",
+        { className: "label" },
+        "Mobile Users"
+      )
+    ),
+    React.createElement(
+      "div",
+      { className: "statistic" },
+      React.createElement(
+        "div",
+        { className: "value" },
+        browsers.length
+      ),
+      React.createElement(
+        "div",
+        { className: "label" },
+        "Browsers"
+      )
+    ),
+    React.createElement(
+      "div",
+      { className: "statistic" },
+      React.createElement(
+        "div",
+        { className: "value" },
+        platforms.length
+      ),
+      React.createElement(
+        "div",
+        { className: "label" },
+        "Platforms"
+      )
+    )
+  );
+};
+
+var LinkStatsCSV = function LinkStatsCSV(props) {
+  var statNodes = props.stats.map(function (entry) {
+    return entry.timestamp + ",\"" + entry.ua + "\",\"" + entry.country.toUpperCase() + "\",\"" + entry.referrer + "\"";
+  });
+  statNodes.unshift("Timestamp,UA,Country,Referrer");
+  return React.createElement(
+    "div",
+    { className: "ui form" },
+    React.createElement(
+      "div",
+      { className: "field" },
+      React.createElement("textarea", { readonly: true, value: statNodes.join("\n") })
+    )
+  );
+};
+
+var LinkStats = function (_React$Component) {
+  _inherits(LinkStats, _React$Component);
+
+  function LinkStats(props) {
+    _classCallCheck(this, LinkStats);
+
+    var _this = _possibleConstructorReturn(this, (LinkStats.__proto__ || Object.getPrototypeOf(LinkStats)).call(this, props));
+
+    _this.viewChart = _this.viewChart.bind(_this);
+    _this.viewTable = _this.viewTable.bind(_this);
+    _this.viewCSV = _this.viewCSV.bind(_this);
+    _this.timedData = _this.props.link.timedEnd ? React.createElement(
+      "p",
+      null,
+      "Open ",
+      new Date(_this.props.link.start).toLocaleString(),
+      " - ",
+      new Date(props.link.end).toLocaleString()
+    ) : React.createElement(
+      "p",
+      null,
+      "Opened ",
+      new Date(_this.props.link.start).toLocaleString()
+    );
+    return _this;
+  }
+
+  _createClass(LinkStats, [{
+    key: "viewChart",
+    value: function viewChart() {
+      $("#statsNav a").removeClass("active");
+      $("#statsSummary").addClass("active");
+      ReactDOM.render(React.createElement(LinkStatsCharts, { link: this.props.link, stats: this.props.stats }), document.querySelector('#statsContainer'));
+    }
+  }, {
+    key: "viewTable",
+    value: function viewTable() {
+      $("#statsNav a").removeClass("active");
+      $("#statsTable").addClass("active");
+      ReactDOM.render(React.createElement(LinkStatsTable, { link: this.props.link, stats: this.props.stats }), document.querySelector('#statsContainer'));
+    }
+  }, {
+    key: "viewCSV",
+    value: function viewCSV() {
+      $("#statsNav a").removeClass("active");
+      $("#statsCSV").addClass("active");
+      ReactDOM.render(React.createElement(LinkStatsCSV, { link: this.props.link, stats: this.props.stats }), document.querySelector('#statsContainer'));
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return React.createElement(
+        "div",
+        null,
+        React.createElement(
+          "div",
+          { className: "ui card", style: { width: '100%' } },
+          React.createElement(
+            "div",
+            { className: "content" },
+            React.createElement(
+              "div",
+              { className: "header" },
+              "Stats for ",
+              React.createElement(
+                "a",
+                { href: "https://" + window.location.hostname + "/" + this.props.link.slug, target: "_blank" },
+                "/",
+                this.props.link.slug
+              )
+            ),
+            React.createElement(
+              "div",
+              { className: "meta" },
+              React.createElement(
+                "a",
+                { href: this.props.link.redirect, target: "_blank" },
+                this.props.link.redirect
+              ),
+              this.timedData
+            )
+          )
+        ),
+        React.createElement(
+          "div",
+          { id: "statsNav", className: "ui secondary pointing menu" },
+          React.createElement(
+            "a",
+            { id: "statsSummary", className: "active item", onClick: this.viewChart },
+            "Summary"
+          ),
+          React.createElement(
+            "a",
+            { id: "statsTable", className: "item", onClick: this.viewTable },
+            "Table"
+          ),
+          React.createElement(
+            "a",
+            { id: "statsCSV", className: "item", onClick: this.viewCSV },
+            "CSV"
+          )
+        ),
+        React.createElement(
+          "div",
+          { id: "statsContainer" },
+          React.createElement(LinkStatsCharts, { link: this.props.link, stats: this.props.stats })
+        )
+      );
+    }
+  }]);
+
+  return LinkStats;
+}(React.Component);
+
+;
+
+var LinkItem = function (_React$Component2) {
+  _inherits(LinkItem, _React$Component2);
 
   function LinkItem(props) {
     _classCallCheck(this, LinkItem);
 
-    var _this = _possibleConstructorReturn(this, (LinkItem.__proto__ || Object.getPrototypeOf(LinkItem)).call(this, props));
+    var _this2 = _possibleConstructorReturn(this, (LinkItem.__proto__ || Object.getPrototypeOf(LinkItem)).call(this, props));
 
-    _this.viewStats = _this.viewStats.bind(_this);
-    return _this;
+    _this2.viewStats = _this2.viewStats.bind(_this2);
+    return _this2;
   }
 
   _createClass(LinkItem, [{
