@@ -4,7 +4,7 @@
 
 URL Link Shortener, similar to bit.ly, s-r.io, etc.
 
-It supports tracking of clicks, including referrer & geolocation (see note in "Above & Beyond" section).
+It supports tracking of clicks, including geolocation (if behind Cloudflare), referrer, & user agent.
 
 ## Profit
 
