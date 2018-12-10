@@ -268,6 +268,7 @@ var LinkStatsCharts = function (_React$Component) {
         _this.platforms[entry.uaParsed.platform]++;
       }
     });
+    _this.mobilePercent = Math.round(_this.mobile / (_this.total - _this.unknown > 0 ? _this.total - _this.unknown : 1) * 100);
     return _this;
   }
 
@@ -364,7 +365,7 @@ var LinkStatsCharts = function (_React$Component) {
         type: 'doughnut',
         data: {
           datasets: [{
-            data: [Math.round(this.mobile / (this.total - this.unknown) * 100), 100 - Math.round(this.mobile / (this.total - this.unknown) * 100)],
+            data: [this.mobilePercent, 100 - this.mobilePercent],
             backgroundColor: colors
           }],
           labels: ['Mobile Users', 'Non-Mobile Users']
@@ -414,7 +415,7 @@ var LinkStatsCharts = function (_React$Component) {
             React.createElement(
               "div",
               { className: "value" },
-              Math.round(this.mobile / (this.total - this.unknown) * 100),
+              this.mobilePercent,
               "%"
             ),
             React.createElement(

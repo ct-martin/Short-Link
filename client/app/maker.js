@@ -156,6 +156,7 @@ class LinkStatsCharts extends React.Component {
         this.platforms[entry.uaParsed.platform]++;
       }
     });
+    this.mobilePercent = Math.round(this.mobile / ((this.total - this.unknown) > 0 ? (this.total - this.unknown) : 1) * 100);
   }
 
   componentDidMount() {
@@ -243,8 +244,8 @@ class LinkStatsCharts extends React.Component {
       data: {
         datasets: [{
           data: [
-            Math.round(this.mobile / (this.total - this.unknown) * 100),
-            100 - Math.round(this.mobile / (this.total - this.unknown) * 100)
+            this.mobilePercent,
+            100 - this.mobilePercent,
           ],
           backgroundColor: colors,
         }],
@@ -275,7 +276,7 @@ class LinkStatsCharts extends React.Component {
           </div>
           <div className="statistic">
             <div className="value">
-              {Math.round(this.mobile / (this.total - this.unknown) * 100)}%
+              {this.mobilePercent}%
             </div>
             <div className="label">
               Mobile Users
