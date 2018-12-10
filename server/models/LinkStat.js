@@ -42,12 +42,6 @@ const LinkStatSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-/*
-Potential future additions:
-  * User Agent
-    * Device (Windows, iOS, Android, Linux, etc.)
-    * Browser (Chrome, Firefox, etc.)
-*/
 
 const parseUA = (ua) => {
   const uaParsed = useragent.parse(ua);
